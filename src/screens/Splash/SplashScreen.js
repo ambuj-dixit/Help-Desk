@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, Text, TouchableOpacity, StatusBar, SafeAreaView } from 'react-native';
 import styles from './style';
 
-const SplashScreen = () => {
+const SplashScreen = ({ onGetStarted }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
@@ -19,11 +19,11 @@ const SplashScreen = () => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>Connected</Text>
-        </View>
-
-        <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={onGetStarted}
+        >
           <Text style={styles.buttonText}>Get Started</Text>
           <Text style={[styles.buttonText, { fontSize: 22 }]}>→</Text>
         </TouchableOpacity>
