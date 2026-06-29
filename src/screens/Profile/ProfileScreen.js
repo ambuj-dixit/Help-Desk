@@ -52,27 +52,55 @@ const ProfileScreen = ({ user, role, onLogout }) => {
           <Text style={styles.phoneText} numberOfLines={1}>Enterprise Park, Silicon Valley, CA</Text>
         </View>
 
-        {/* Active Subscriptions */}
-        <View style={styles.subHeader}>
-          <Text style={styles.sectionTitle}>Active Subscriptions</Text>
-          <TouchableOpacity>
-            <Text style={styles.viewAll}>View All</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ flexShrink: 1 }}>
-          {subscriptions.map((item) => (
-            <View key={item.id} style={styles.subCard}>
-              <View>
-                <Text style={styles.subTitle}>{item.name}</Text>
-                <Text style={styles.subDetail}>{item.detail}</Text>
-              </View>
-              <View style={[styles.statusBadge, { backgroundColor: item.color }]}>
-                <Text style={[styles.statusText, { color: item.txt }]}>{item.status}</Text>
-              </View>
+        {/* Active Subscriptions - Only visible for CLIENT */}
+        {role === 'CLIENT' && (
+          <>
+            <View style={styles.subHeader}>
+              <Text style={styles.sectionTitle}>Active Subscriptions</Text>
+              <TouchableOpacity>
+                <Text style={styles.viewAll}>View All</Text>
+              </TouchableOpacity>
             </View>
-          ))}
-        </View>
+
+            <View style={{ flexShrink: 1 }}>
+              {subscriptions.map((item) => (
+                <View key={item.id} style={styles.subCard}>
+                  <View>
+                    <Text style={styles.subTitle}>{item.name}</Text>
+                    <Text style={styles.subDetail}>{item.detail}</Text>
+                  </View>
+                  <View style={[styles.statusBadge, { backgroundColor: item.color }]}>
+                    <Text style={[styles.statusText, { color: item.txt }]}>{item.status}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
+
+        {/* Assigned Products - Visible only for PM */}
+        {role === 'PM' && (
+          <>
+            <View style={styles.subHeader}>
+              <Text style={styles.sectionTitle}>Assigned Products</Text>
+            </View>
+
+            <View style={{ flexShrink: 1 }}>
+              {[
+                { name: 'eSIM Campus Solution', icon: 'server' },
+                { name: 'HRMS Portal', icon: 'users' }
+              ].map((item, idx) => (
+                <View key={idx} style={styles.subCard}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Icon name={item.icon} size={16} color="#64748B" style={{ marginRight: 12 }} />
+                    <Text style={styles.subTitle}>{item.name}</Text>
+                  </View>
+                  <Icon name="chevron-right" size={16} color="#CBD5E1" />
+                </View>
+              ))}
+            </View>
+          </>
+        )}
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} activeOpacity={0.7} onPress={onLogout}>

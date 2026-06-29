@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
-const Footer = ({ activeTab, onTabPress }) => {
+const Footer = ({ activeTab, onTabPress, role }) => {
   const tabs = [
     { id: 'Dashboard', icon: 'grid', label: 'Dashboard' },
     { id: 'Tickets', icon: 'tag', label: 'Tickets' },

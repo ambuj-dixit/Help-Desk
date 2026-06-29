@@ -56,7 +56,13 @@ const App = () => {
 
   const handleLoginSuccess = (role) => {
     setUserRole(role);
-    setUser({ email: 'client@mail.com', name: 'Sarah' });
+    if (role === 'DEVELOPER') {
+      setUser({ email: 'dev@mail.com', name: 'Alex' });
+    } else if (role === 'PM') {
+      setUser({ email: 'pm@mail.com', name: 'James' });
+    } else {
+      setUser({ email: 'client@mail.com', name: 'Sarah' });
+    }
     setCurrentScreen('Dashboard');
     setActiveTab('Dashboard');
     setTabHistory([]);

@@ -30,6 +30,10 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     if (email === 'client@mail.com' && password === 'client123') {
       onLoginSuccess('CLIENT');
+    } else if (email === 'dev@mail.com' && password === 'dev123') {
+      onLoginSuccess('DEVELOPER');
+    } else if (email === 'pm@mail.com' && password === 'pm123') {
+      onLoginSuccess('PM');
     } else {
       showError('Invalid Credentials', 'The email or password you entered is incorrect. Please try again with the correct credentials.');
     }
