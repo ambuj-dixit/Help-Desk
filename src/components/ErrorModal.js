@@ -5,11 +5,9 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-
-const { width } = Dimensions.get('window');
+import { colors, shadows } from '../theme';
 
 const ErrorModal = ({ visible, title, message, onClose }) => {
   if (!visible) return null;
@@ -24,7 +22,7 @@ const ErrorModal = ({ visible, title, message, onClose }) => {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <View style={styles.modalIconContainer}>
-            <Icon name="alert-circle" size={32} color="#EF4444" />
+            <Icon name="alert-circle" size={32} color={colors.error} />
           </View>
           <Text style={styles.modalTitle}>{title || 'Error'}</Text>
           <Text style={styles.modalMessage}>{message}</Text>
@@ -51,22 +49,18 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 28,
     padding: 24,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#F1F5F9',
-    elevation: 20,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
+    borderColor: colors.borderLight,
+    ...shadows.heavy,
   },
   modalIconContainer: {
     width: 64,
     height: 64,
-    backgroundColor: '#FEF2F2',
+    backgroundColor: colors.errorLight,
     borderRadius: 32,
     justifyContent: 'center',
     alignItems: 'center',
@@ -75,12 +69,12 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#0F172A',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   modalMessage: {
     fontSize: 15,
-    color: '#64748B',
+    color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 24,
@@ -88,13 +82,13 @@ const styles = StyleSheet.create({
   modalButton: {
     width: '100%',
     height: 52,
-    backgroundColor: '#0F172A',
+    backgroundColor: colors.textPrimary,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalButtonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   },

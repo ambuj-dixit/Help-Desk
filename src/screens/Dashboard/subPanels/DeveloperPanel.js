@@ -1,11 +1,22 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import styles from '../style';
 
 const { height } = Dimensions.get('window');
 
-const DeveloperPanel = ({ user }) => {
+const DeveloperPanel = () => {
+  const { user } = useSelector((state) => state.auth);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    if (hour < 21) return 'Good Evening';
+    return 'Good Night';
+  };
+
   const stats = [
     { label: 'My Tasks', value: 24, icon: 'list', color: '#F1F5F9', iconColor: '#64748B' },
     { label: 'In Progress', value: 3, icon: 'loader', color: '#FEF3C7', iconColor: '#D97706' },
@@ -27,8 +38,8 @@ const DeveloperPanel = ({ user }) => {
       >
         {/* Welcome Section */}
         <View style={styles.welcomeSection}>
-          <Text style={styles.welcomeText}>Developer Dashboard</Text>
-          <Text style={styles.subWelcomeText}>Welcome back, {user?.name || 'Alex'}. Here's your work overview.</Text>
+          <Text style={styles.welcomeText}>{getGreeting()}, {user?.UserName || 'Developer'}</Text>
+          <Text style={styles.subWelcomeText}>Here is your work overview for today.</Text>
         </View>
 
         {/* Stats Section */}

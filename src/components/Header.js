@@ -1,9 +1,16 @@
+/**
+ * Shared Header Component
+ * Provides a consistent top bar with title, back button, and logo.
+ */
+
 import React from 'react';
 import { View, Text, StyleSheet, Platform, TouchableOpacity, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather';
+import { colors } from '../theme';
 
 const Header = ({ title, showBack, onBack }) => {
+  // Hook to handle status bar spacing for notch/island devices
   const insets = useSafeAreaInsets();
 
   return (
@@ -12,13 +19,14 @@ const Header = ({ title, showBack, onBack }) => {
       { paddingTop: insets.top + (Platform.OS === 'android' ? 10 : 0) }
     ]}>
       <View style={styles.content}>
-        {/* Left Section: Back Button or Logo */}
+        {/* Left Section: Contextual Action (Back or Branding) */}
         <View style={styles.leftSection}>
           {showBack ? (
             <TouchableOpacity onPress={onBack} style={styles.backButton}>
-              <Icon name="arrow-left" size={24} color="#FFFFFF" />
+              <Icon name="arrow-left" size={24} color={colors.white} />
             </TouchableOpacity>
           ) : (
+            // Logo Badge: Circular branding container
             <View style={styles.logoBadge}>
               <Image
                 source={require('../assets/mkt_logo.png')}
@@ -28,12 +36,12 @@ const Header = ({ title, showBack, onBack }) => {
           )}
         </View>
 
-        {/* Center Section: Title */}
+        {/* Center Section: View Title */}
         <View style={styles.centerSection}>
           <Text style={styles.title}>{title}</Text>
         </View>
 
-        {/* Right Section: Status Indicator / Action */}
+        {/* Right Section: Activity Indicator */}
         <View style={styles.rightSection}>
            <View style={styles.statusDot} />
            <Text style={styles.liveText}>Live</Text>
@@ -45,7 +53,7 @@ const Header = ({ title, showBack, onBack }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#3B82F6', // Brighter shade of brand blue
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.1)',
     elevation: 4,
@@ -55,7 +63,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   content: {
-    height: 48, // Reduced height
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -80,18 +88,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   logoBadge: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    backgroundColor: colors.white,
+    borderRadius: 22, // Half of width/height for a perfect circle
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
-    marginTop: -4, // Shifted slightly above to align with top edge/status bar flow
+    marginTop: -4,
+    overflow: 'hidden',
   },
   headerLogo: {
-    width: 40, // Increased logo size
-    height: 40, // Increased logo size
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
   },
   backButton: {
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: colors.white,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
@@ -108,13 +117,13 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#10B981',
+    backgroundColor: colors.success,
     marginRight: 6,
   },
   liveText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
     textTransform: 'uppercase',
   },
 });

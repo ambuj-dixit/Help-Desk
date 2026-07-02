@@ -1,4 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
+import { colors, shadows } from '../../theme';
 
 export default StyleSheet.create({
   container: {
@@ -21,11 +22,11 @@ export default StyleSheet.create({
   welcomeText: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   subWelcomeText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textSecondary,
     marginTop: 4,
   },
   statsGrid: {
@@ -36,23 +37,13 @@ export default StyleSheet.create({
   },
   statCard: {
     width: '48%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    borderColor: colors.border,
+    ...shadows.soft,
   },
   statIconContainer: {
     width: 40,
@@ -65,11 +56,11 @@ export default StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   statLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textSecondary,
     fontWeight: '500',
     marginTop: 2,
   },
@@ -82,20 +73,20 @@ export default StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#0F172A',
+    color: colors.textPrimary,
   },
   viewAllText: {
     fontSize: 14,
-    color: '#2563EB',
+    color: colors.primary,
     fontWeight: '600',
   },
   ticketCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   ticketHeader: {
     flexDirection: 'row',
@@ -105,7 +96,7 @@ export default StyleSheet.create({
   },
   ticketId: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: colors.textMuted,
     fontWeight: '600',
   },
   statusBadge: {
@@ -120,12 +111,12 @@ export default StyleSheet.create({
   ticketTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#0F172A',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   ticketDesc: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.textSecondary,
     lineHeight: 18,
     marginBottom: 12,
   },
@@ -140,32 +131,34 @@ export default StyleSheet.create({
   },
   timeText: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: colors.textMuted,
     marginLeft: 4,
   },
   avatar: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  globalFab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 85, // Lowered even more, just above footer
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#2563EB',
+  submitButton: {
+    height: 52,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#2563EB',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    zIndex: 999,
+  },
+  submitText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+    marginRight: 8,
+  },
+  infoLabel: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
 });

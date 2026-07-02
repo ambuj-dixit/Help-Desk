@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
+/**
+ * Dashboard Screen
+ * Orchestrates rendering of specific panels based on the user's role from the API.
+ */
+
+import React from 'react';
 import { View, Text } from 'react-native';
+import { useSelector } from 'react-redux';
 import styles from './style';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -7,78 +13,37 @@ import FAB from '../../components/FAB';
 import ClientPanel from './subPanels/ClientPanel';
 import DeveloperPanel from './subPanels/DeveloperPanel';
 import PMPanel from './subPanels/PMPanel';
+import AdminPanel from './subPanels/AdminPanel';
 import ProfileScreen from '../Profile';
 
-const DashboardScreen = ({ role, user, activeTab, onTabPress, onCreateTicket, onLogout }) => {
+const DashboardScreen = ({ activeTab, onTabPress, onCreateTicket, onLogout }) => {
+  // Get real role and user data from Redux
+  const { role, user } = useSelector((state) => state.auth);
 
   const renderContent = () => {
+    // 1. Profile Tab
     if (activeTab === 'Profile') {
       return <ProfileScreen user={user} role={role} onLogout={onLogout} />;
     }
 
-    if (role === 'CLIENT') {
-      switch (activeTab) {
-        case 'Dashboard':
-          return <ClientPanel user={user} />;
-        case 'Tickets':
-          return (
-            <View style={styles.center}>
-              <Text style={{ color: '#64748B' }}>Ticket History Panel</Text>
-            </View>
-          );
-        case 'Alerts':
-          return (
-            <View style={styles.center}>
-              <Text style={{ color: '#64748B' }}>Notifications Panel</Text>
-            </View>
-          );
-        default:
-          return <ClientPanel user={user} />;
-      }
+    // 2. Main Dashboard Tab - Rendering based on API Role
+    if (activeTab === 'Dashboard') {
+      // Logic for rendering panels based on verified API role
+      if (role === 'CLIENT') return <ClientPanel />;
+      if (role === 'DEVELOPER') return <DeveloperPanel />;
+      if (role === 'ADMIN') return <AdminPanel />;
+      if (role === 'PM') return <PMPanel />;
+
+      // Fallback for any other roles
+      return <AdminPanel />;
     }
 
-    if (role === 'DEVELOPER') {
-      switch (activeTab) {
-        case 'Dashboard':
-          return <DeveloperPanel user={user} />;
-        case 'Tickets':
-          return (
-            <View style={styles.center}>
-              <Text style={{ color: '#64748B' }}>My Assignments Panel</Text>
-            </View>
-          );
-        case 'Alerts':
-          return (
-            <View style={styles.center}>
-              <Text style={{ color: '#64748B' }}>Developer Alerts</Text>
-            </View>
-          );
-        default:
-          return <DeveloperPanel user={user} />;
-      }
-    }
-
-    if (role === 'PM') {
-      switch (activeTab) {
-        case 'Dashboard':
-          return <PMPanel user={user} />;
-        case 'Tickets':
-          return (
-            <View style={styles.center}>
-              <Text style={{ color: '#64748B' }}>Product Queue Overview</Text>
-            </View>
-          );
-        case 'Alerts':
-          return (
-            <View style={styles.center}>
-              <Text style={{ color: '#64748B' }}>Manager Alerts</Text>
-            </View>
-          );
-        default:
-          return <PMPanel user={user} />;
-      }
-    }
-    return null;
+    // 3. Placeholder for other tabs (Tickets, Alerts)
+    return (
+      <View style={styles.center}>
+        <Text style={{ color: '#64748B' }}>{activeTab} Content Loading...</Text>
+      </View>
+    );
   };
 
   return (
@@ -91,10 +56,10 @@ const DashboardScreen = ({ role, user, activeTab, onTabPress, onCreateTicket, on
         {renderContent()}
       </View>
 
-      {/* Global Floating Action Button - Only visible for CLIENT as per revised requirement */}
+      {/* Floating Action Button for Clients */}
       {role === 'CLIENT' && <FAB onPress={onCreateTicket} />}
 
-      {/* Dynamic Footer */}
+      {/* Navigation Footer */}
       <Footer
         activeTab={activeTab}
         onTabPress={onTabPress}

@@ -7,15 +7,25 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Modal
+  Modal,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Header from '../../components/Header';
 import ErrorModal from '../../components/ErrorModal';
 import styles from './style';
+import { createTicket } from '../../store/slices/ticketSlice';
+import { colors } from '../../theme';
 
 const CreateTicketScreen = ({ onBack }) => {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.tickets);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Med');
   const [attachment, setAttachment] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
@@ -30,31 +40,21 @@ const CreateTicketScreen = ({ onBack }) => {
   const handleFilePicker = (type) => {
     const options = {
       mediaType: 'photo',
-      quality: 0.8,
-      includeExtra: true,
+      maxWidth: 200, // Minimal size to try and fit in GET URL
+      maxHeight: 200,
+      quality: 0.1, // Maximum compression
+      includeBase64: true,
     };
 
     const callback = (response) => {
       setShowPicker(false);
-
       if (response.didCancel) return;
-
       if (response.errorCode) {
         showError('Picker Error', response.errorMessage);
         return;
       }
 
       const file = response.assets[0];
-      const sizeMB = file.fileSize / (1024 * 1024);
-
-      if (sizeMB > 2) {
-        showError(
-          'File Too Large',
-          'The selected image exceeds the 2MB limit. Please upload a smaller screenshot or photo.'
-        );
-        return;
-      }
-
       setAttachment(file);
     };
 
@@ -62,6 +62,35 @@ const CreateTicketScreen = ({ onBack }) => {
       launchCamera(options, callback);
     } else {
       launchImageLibrary(options, callback);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !description.trim()) {
+      showError('Required Fields', 'Please enter a title and description for your ticket.');
+      return;
+    }
+
+    const ticketData = {
+      ProductID: 1, // Default placeholders
+      ModuleID: 1,
+      Title: title,
+      Description: description,
+      Priority: priority,
+      Attachment: attachment?.base64 || ''
+    };
+
+    const resultAction = await dispatch(createTicket(ticketData));
+
+    if (createTicket.fulfilled.match(resultAction)) {
+      const { TicketNo } = resultAction.payload;
+      Alert.alert(
+        "Ticket Created",
+        `Your ticket has been submitted successfully.\n\nTicket No: ${TicketNo}`,
+        [{ text: "OK", onPress: onBack }]
+      );
+    } else {
+      showError('Submission Failed', resultAction.payload || 'Could not create ticket. Please try again.');
     }
   };
 
@@ -95,7 +124,7 @@ const CreateTicketScreen = ({ onBack }) => {
               style={styles.pickerItem}
               onPress={() => handleFilePicker('camera')}
             >
-              <Icon name="camera" size={22} color="#2563EB" />
+              <Icon name="camera" size={22} color={colors.primary} />
               <Text style={styles.pickerText}>Take Photo</Text>
             </TouchableOpacity>
 
@@ -103,7 +132,7 @@ const CreateTicketScreen = ({ onBack }) => {
               style={styles.pickerItem}
               onPress={() => handleFilePicker('gallery')}
             >
-              <Icon name="image" size={22} color="#2563EB" />
+              <Icon name="image" size={22} color={colors.primary} />
               <Text style={styles.pickerText}>Upload Screenshot</Text>
             </TouchableOpacity>
 
@@ -111,7 +140,7 @@ const CreateTicketScreen = ({ onBack }) => {
               style={[styles.pickerItem, { borderBottomWidth: 0, marginTop: 10 }]}
               onPress={() => setShowPicker(false)}
             >
-              <Text style={[styles.pickerText, { color: '#EF4444', marginLeft: 0, width: '100%', textAlign: 'center' }]}>Cancel</Text>
+              <Text style={[styles.pickerText, { color: colors.error, marginLeft: 0, width: '100%', textAlign: 'center' }]}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -126,14 +155,14 @@ const CreateTicketScreen = ({ onBack }) => {
           <View style={styles.card}>
             <Text style={styles.label}>Product</Text>
             <TouchableOpacity style={styles.inputWrapper}>
-              <Text style={{ color: '#94A3B8' }}>Select a product...</Text>
-              <Icon name="chevron-down" size={20} color="#64748B" style={styles.dropdownIcon} />
+              <Text style={{ color: colors.textPrimary }}>Help-Desk Core (Default)</Text>
+              <Icon name="chevron-down" size={20} color={colors.textMuted} style={styles.dropdownIcon} />
             </TouchableOpacity>
 
             <Text style={[styles.label, { marginTop: 16 }]}>Module</Text>
             <TouchableOpacity style={styles.inputWrapper}>
-              <Text style={{ color: '#94A3B8' }}>Select a module...</Text>
-              <Icon name="chevron-down" size={20} color="#64748B" style={styles.dropdownIcon} />
+              <Text style={{ color: colors.textPrimary }}>Standard Module (Default)</Text>
+              <Icon name="chevron-down" size={20} color={colors.textMuted} style={styles.dropdownIcon} />
             </TouchableOpacity>
           </View>
 
@@ -144,7 +173,9 @@ const CreateTicketScreen = ({ onBack }) => {
               <TextInput
                 style={styles.textInput}
                 placeholder="Brief summary of the issue"
-                placeholderTextColor="#94A3B8"
+                placeholderTextColor={colors.textMuted}
+                value={title}
+                onChangeText={setTitle}
               />
             </View>
 
@@ -152,9 +183,11 @@ const CreateTicketScreen = ({ onBack }) => {
             <TextInput
               style={styles.textArea}
               placeholder="Provide detailed steps to reproduce..."
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor={colors.textMuted}
               multiline={true}
               numberOfLines={4}
+              value={description}
+              onChangeText={setDescription}
             />
           </View>
 
@@ -179,14 +212,14 @@ const CreateTicketScreen = ({ onBack }) => {
             <TouchableOpacity
               style={[
                 styles.uploadBox,
-                attachment && { borderColor: '#10B981', backgroundColor: '#F0FDF4' }
+                attachment && { borderColor: colors.success, backgroundColor: '#F0FDF4' }
               ]}
               onPress={() => setShowPicker(true)}
             >
               <Icon
                 name={attachment ? "check-circle" : "upload-cloud"}
                 size={24}
-                color={attachment ? "#10B981" : "#2563EB"}
+                color={attachment ? colors.success : colors.primary}
               />
               <Text style={[styles.uploadText, attachment && { color: '#166534' }]}>
                 {attachment ? attachment.fileName : "Tap to upload screenshot or photo"}
@@ -199,7 +232,7 @@ const CreateTicketScreen = ({ onBack }) => {
                   style={styles.removeBtn}
                   onPress={() => setAttachment(null)}
                 >
-                  <Text style={{ color: '#B91C1C', fontWeight: '700', fontSize: 12 }}>Remove</Text>
+                  <Text style={{ color: colors.error, fontWeight: '700', fontSize: 12 }}>Remove</Text>
                 </TouchableOpacity>
               )}
             </TouchableOpacity>
@@ -208,9 +241,20 @@ const CreateTicketScreen = ({ onBack }) => {
       </KeyboardAvoidingView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.submitButton} activeOpacity={0.8}>
-          <Text style={styles.submitText}>Submit Ticket</Text>
-          <Icon name="send" size={18} color="#FFFFFF" />
+        <TouchableOpacity
+          style={[styles.submitButton, loading && { opacity: 0.7 }]}
+          activeOpacity={0.8}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={colors.white} />
+          ) : (
+            <>
+              <Text style={styles.submitText}>Submit Ticket</Text>
+              <Icon name="send" size={18} color={colors.white} />
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </View>

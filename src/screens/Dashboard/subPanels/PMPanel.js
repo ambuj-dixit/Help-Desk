@@ -1,11 +1,22 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import styles from '../style';
 
 const { height } = Dimensions.get('window');
 
-const PMPanel = ({ user }) => {
+const PMPanel = () => {
+  const { user } = useSelector((state) => state.auth);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    if (hour < 21) return 'Good Evening';
+    return 'Good Night';
+  };
+
   const stats = [
     { label: 'ASSIGNED CLIENTS', value: 24, icon: 'briefcase', color: '#F1F5F9', iconColor: '#2563EB' },
     { label: 'OPEN TICKETS', value: 52, icon: 'tag', color: '#F1F5F9', iconColor: '#2563EB' },
@@ -33,7 +44,7 @@ const PMPanel = ({ user }) => {
         showsVerticalScrollIndicator={false}
       >
         {/* Overview Section */}
-        <Text style={styles.welcomeText}>Overview</Text>
+        <Text style={styles.welcomeText}>{getGreeting()}, {user?.UserName || 'Manager'}</Text>
         <Text style={styles.subWelcomeText}>Real-time pulse on your active queues.</Text>
 
         <TouchableOpacity style={[styles.statCard, { width: '100%', padding: 10, flexDirection: 'row', justifyContent: 'center', marginTop: 16, marginBottom: 20 }]}>

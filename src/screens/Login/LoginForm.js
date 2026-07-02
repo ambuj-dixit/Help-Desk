@@ -1,4 +1,9 @@
-import React, { useState } from 'react';
+/**
+ * Login Screen
+ * Updated to support Username (Uppercase) and Password as per backend spec.
+ */
+
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,33 +15,43 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import styles from './style';
 import ErrorModal from '../../components/ErrorModal';
+import { loginUser, clearError } from '../../store/slices/authSlice';
 
-const LoginForm = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
+const LoginForm = () => {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  // Local state for username and password
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [errorConfig, setErrorConfig] = useState({ title: '', message: '' });
 
+  useEffect(() => {
+    if (error) {
+      showError('Login Error', error);
+      dispatch(clearError());
+    }
+  }, [error]);
+
+  /**
+   * Dispatches login with username forced to uppercase
+   */
   const handleSignIn = () => {
-    if (!email.trim() || !password.trim()) {
-      showError('Empty Fields', 'Please enter both your email address and password to continue.');
+    if (!username.trim() || !password.trim()) {
+      showError('Empty Fields', 'Please enter both your username and password to continue.');
       return;
     }
 
-    if (email === 'client@mail.com' && password === 'client123') {
-      onLoginSuccess('CLIENT');
-    } else if (email === 'dev@mail.com' && password === 'dev123') {
-      onLoginSuccess('DEVELOPER');
-    } else if (email === 'pm@mail.com' && password === 'pm123') {
-      onLoginSuccess('PM');
-    } else {
-      showError('Invalid Credentials', 'The email or password you entered is incorrect. Please try again with the correct credentials.');
-    }
+    // Note: The conversion to UpperCase is also handled in the Redux Thunk for safety
+    dispatch(loginUser({ username, password }));
   };
 
   const showError = (title, message) => {
@@ -64,7 +79,6 @@ const LoginForm = ({ onLoginSuccess }) => {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header Section */}
           <View style={styles.headerSection}>
             <View style={styles.logoContainer}>
               <Image
@@ -76,24 +90,24 @@ const LoginForm = ({ onLoginSuccess }) => {
             <Text style={styles.subtitle}>Enterprise Support Management</Text>
           </View>
 
-          {/* Form Section */}
           <View style={styles.formContainer}>
+            {/* Username Input - Forced Uppercase */}
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email Address</Text>
+              <Text style={styles.label}>Username</Text>
               <View style={styles.inputWrapper}>
-                <Icon name="mail" size={18} color="#94A3B8" style={styles.inputIcon} />
+                <Icon name="user" size={18} color="#94A3B8" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   placeholderTextColor="#94A3B8"
-                  value={email}
-                  onChangeText={setEmail}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
+                  value={username}
+                  onChangeText={(val) => setUsername(val.toUpperCase())} // UI conversion to Uppercase
+                  autoCapitalize="characters" // Keyboard suggestion for Uppercase
                 />
               </View>
             </View>
 
+            {/* Password Input */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Password</Text>
               <View style={styles.inputWrapper}>
@@ -120,12 +134,19 @@ const LoginForm = ({ onLoginSuccess }) => {
             </View>
 
             <TouchableOpacity
-              style={styles.signInButton}
+              style={[styles.signInButton, loading && { opacity: 0.7 }]}
               activeOpacity={0.8}
               onPress={handleSignIn}
+              disabled={loading}
             >
-              <Text style={styles.signInButtonText}>Sign In</Text>
-              <Icon name="arrow-right" size={18} color="#FFFFFF" />
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <>
+                  <Text style={styles.signInButtonText}>Sign In</Text>
+                  <Icon name="arrow-right" size={18} color="#FFFFFF" />
+                </>
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>

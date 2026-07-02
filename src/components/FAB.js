@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { colors, shadows } from '../theme';
 
 const FAB = ({ onPress }) => {
   return (
@@ -9,7 +10,7 @@ const FAB = ({ onPress }) => {
       activeOpacity={0.8}
       onPress={onPress}
     >
-      <Icon name="plus" size={30} color="#FFFFFF" />
+      <Icon name="plus" size={30} color={colors.white} />
     </TouchableOpacity>
   );
 };
@@ -22,14 +23,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#2563EB',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#2563EB',
-    shadowOffset: { width: 0, height: 4 },
+    ...shadows.heavy,
+    shadowColor: colors.primary,
     shadowOpacity: 0.4,
-    shadowRadius: 10,
     zIndex: 999,
   },
 });

@@ -1,116 +1,91 @@
+/**
+ * Profile Screen - Optimized UI
+ * Screen-filling layout with zero-scroll design and real data integration.
+ */
+
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import styles from './style';
+import { colors } from '../../theme';
 
-const ProfileScreen = ({ user, role, onLogout }) => {
-  const subscriptions = [
-    { id: 1, name: 'ESIM Campus Solution', detail: 'Renewal: Oct 12, 2026', status: 'Active', color: '#D1FAE5', txt: '#059669' },
-    { id: 2, name: 'HRMS', detail: 'Renewal: Jan 20, 2026', status: 'Active', color: '#D1FAE5', txt: '#059669' },
-    { id: 3, name: 'VMS', detail: 'Expires in 3 days', status: 'Pending', color: '#FFEDD5', txt: '#D97706' },
-  ];
+const ProfileScreen = ({ onLogout }) => {
+  // Get real user data from Redux (Backend Response)
+  const { user } = useSelector((state) => state.auth);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        {/* User Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarWrapper}>
-            <View style={styles.avatarContainer}>
-              <Icon name="user" size={40} color="#2563EB" />
-            </View>
-            <View style={styles.editBadge}>
-              <Icon name="edit-2" size={12} color="#FFFFFF" />
-            </View>
-          </View>
-          <Text style={styles.nameText}>{user?.name || 'Sarah Jenkins'}</Text>
-          <Text style={styles.emailText}>{user?.email || 'sarah.j@sanskriti.edu'}</Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
 
-        {/* Organization Card */}
-        <View style={styles.sectionCard}>
-          <View style={styles.orgIcon}>
-            <Icon name="home" size={20} color="#2563EB" />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.orgName}>Sanskriti University</Text>
-            <Text style={styles.orgSub}>Primary Organization</Text>
-          </View>
-          <Icon name="check-circle" size={18} color="#94A3B8" />
-        </View>
-
-        {/* Contact Details */}
-        <Text style={styles.sectionTitle}>Contact Details</Text>
-        <View style={styles.phoneWrapper}>
-          <Icon name="phone" size={18} color="#64748B" />
-          <Text style={styles.phoneText}>+1 (555) 012-3456</Text>
-        </View>
-
-        {/* Organization Address */}
-        <View style={[styles.phoneWrapper, { marginTop: -4, borderTopWidth: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }]}>
-          <Icon name="map-pin" size={18} color="#64748B" />
-          <Text style={styles.phoneText} numberOfLines={1}>Enterprise Park, Silicon Valley, CA</Text>
-        </View>
-
-        {/* Active Subscriptions - Only visible for CLIENT */}
-        {role === 'CLIENT' && (
-          <>
-            <View style={styles.subHeader}>
-              <Text style={styles.sectionTitle}>Active Subscriptions</Text>
-              <TouchableOpacity>
-                <Text style={styles.viewAll}>View All</Text>
+      <View style={styles.mainWrapper}>
+        {/* Top: Branding & User Header */}
+        <View style={styles.topSection}>
+          <View style={styles.profileHeader}>
+            <View style={styles.avatarWrapper}>
+              <View style={styles.avatarContainer}>
+                <Icon name="user" size={42} color={colors.primary} />
+              </View>
+              <TouchableOpacity style={styles.editBadge} activeOpacity={0.8}>
+                <Icon name="camera" size={12} color={colors.white} />
               </TouchableOpacity>
             </View>
+            <Text style={styles.nameText}>{user?.UserName || 'User'}</Text>
+            <Text style={styles.emailText}>{user?.Email || 'No Email Provided'}</Text>
+          </View>
+        </View>
 
-            <View style={{ flexShrink: 1 }}>
-              {subscriptions.map((item) => (
-                <View key={item.id} style={styles.subCard}>
-                  <View>
-                    <Text style={styles.subTitle}>{item.name}</Text>
-                    <Text style={styles.subDetail}>{item.detail}</Text>
-                  </View>
-                  <View style={[styles.statusBadge, { backgroundColor: item.color }]}>
-                    <Text style={[styles.statusText, { color: item.txt }]}>{item.status}</Text>
-                  </View>
-                </View>
-              ))}
+        {/* Middle: Information Cards */}
+        <View style={styles.middleSection}>
+          <View style={styles.infoGroup}>
+            <Text style={styles.sectionLabel}>WORKPLACE</Text>
+            <View style={styles.sectionCard}>
+              <View style={styles.iconBox}>
+                <Icon name="briefcase" size={20} color={colors.primary} />
+              </View>
+              <View>
+                <Text style={styles.cardMainText}>{user?.CompanyName || 'MKT Softwares'}</Text>
+                <Text style={styles.cardSubText}>ID: {user?.CompanyID || '0'}</Text>
+              </View>
             </View>
-          </>
-        )}
+          </View>
 
-        {/* Assigned Products - Visible only for PM */}
-        {role === 'PM' && (
-          <>
-            <View style={styles.subHeader}>
-              <Text style={styles.sectionTitle}>Assigned Products</Text>
+          <View style={styles.infoGroup}>
+            <Text style={styles.sectionLabel}>CONTACT DETAILS</Text>
+            <View style={styles.phoneWrapper}>
+              <Icon name="phone" size={18} color={colors.primary} />
+              <Text style={styles.phoneText}>{user?.ContactNo || 'N/A'}</Text>
             </View>
+          </View>
 
-            <View style={{ flexShrink: 1 }}>
-              {[
-                { name: 'eSIM Campus Solution', icon: 'server' },
-                { name: 'HRMS Portal', icon: 'users' }
-              ].map((item, idx) => (
-                <View key={idx} style={styles.subCard}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Icon name={item.icon} size={16} color="#64748B" style={{ marginRight: 12 }} />
-                    <Text style={styles.subTitle}>{item.name}</Text>
-                  </View>
-                  <Icon name="chevron-right" size={16} color="#CBD5E1" />
-                </View>
-              ))}
+          <View style={styles.infoGroup}>
+            <Text style={styles.sectionLabel}>ACCOUNT PERMISSIONS</Text>
+            <View style={styles.rowCard}>
+               <View>
+                 <Text style={styles.rowMainText}>Access Role</Text>
+                 <Text style={styles.rowSubText}>System Permission Level</Text>
+               </View>
+               <View style={[styles.statusBadge, { backgroundColor: colors.primaryLight }]}>
+                 <Text style={[styles.statusText, { color: colors.primary }]}>{(user?.Role || 'User').toUpperCase()}</Text>
+               </View>
             </View>
-          </>
-        )}
+          </View>
+        </View>
 
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} activeOpacity={0.7} onPress={onLogout}>
-          <Icon name="log-out" size={18} color="#EF4444" />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.versionText}>Version 2.0.1 (Build 890)</Text>
+        {/* Bottom: Actions & Version */}
+        <View style={styles.bottomSection}>
+          <TouchableOpacity
+            style={styles.logoutBtn}
+            activeOpacity={0.8}
+            onPress={onLogout}
+          >
+            <Icon name="log-out" size={18} color={colors.error} />
+            <Text style={styles.logoutBtnText}>End Session</Text>
+          </TouchableOpacity>
+          <Text style={styles.versionText}>Help-Desk v1.0.2 • Build 2024.1</Text>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -1,11 +1,12 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { colors, shadows } from '../../theme';
 
 const { width } = Dimensions.get('window');
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.background,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 60,
@@ -18,15 +19,11 @@ export default StyleSheet.create({
   logoContainer: {
     width: 120,
     height: 120,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    ...shadows.medium,
     marginBottom: 24,
   },
   logo: {
@@ -37,13 +34,13 @@ export default StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#0F172A',
+    color: colors.textPrimary,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2563EB',
+    color: colors.primary,
     letterSpacing: 2,
     marginTop: 8,
     textTransform: 'uppercase',
@@ -53,43 +50,26 @@ export default StyleSheet.create({
     paddingHorizontal: 24,
     alignItems: 'center',
   },
-  badge: {
-    backgroundColor: '#3B82F6',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginBottom: 12,
-    marginLeft: 4,
-  },
-  badgeText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
   button: {
     width: '100%',
     height: 56,
-    backgroundColor: '#0047AB',
+    backgroundColor: colors.primaryDark,
     borderRadius: 28,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    ...shadows.soft,
     shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontSize: 18,
     fontWeight: '600',
     marginRight: 8,
   },
   footerText: {
     fontSize: 14,
-    color: '#64748B',
+    color: colors.textSecondary,
     marginTop: 16,
     fontWeight: '500',
   },
